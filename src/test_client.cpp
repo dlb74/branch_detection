@@ -38,7 +38,15 @@
 #define KMEANFILTER_RANGE 10
 #define KMEANFILTER_THRESH_STDVMUL 0.8
 
+#define BRANCH_NORM_KSEARCH_RADIUS 0.01
+#define BRANCHSEG_NORMDIST_WEIGHT 0.05
+#define BRANCHSEG_MAXITT 1000
+#define BRANCHSEG_CYLDIST_THRESH 0.01
+#define BRANCHSEG_CYLRAD_MIN 0.002
+#define BRANCHSEG_CYLRAD_MAX 0.025
+
 typedef pcl::PointXYZ PointT;
+typedef pcl::Normal PointNT;
 
 
 pcl::PointCloud<PointT>::Ptr cloud (new pcl::PointCloud<PointT>);
@@ -66,6 +74,63 @@ void Frame_Filter( pcl::PointCloud<PointT>::Ptr cloud,
     sor.filter (*cloud_filtered);
 }
 
+void Branch_Seg( pcl::PointCloud<PointT>::Ptr cloud,
+                 pcl::PointCloud<PointNT>::Ptr cloud_normals,
+                 pcl::ModelCoefficients::Ptr coefficients_cylinder,
+                 pcl::PointCloud<PointT>::Ptr cloud_remainder )
+{
+    pcl::PointIndices::Ptr inliers_branch (new pcl::PointIndices);
+    pcl::SACSegmentationFromNormals<PointT, PointNT> seg;
+    pcl::ExtractIndices<PointT> extract;
+
+    // Create the segmentation object for cylinder segmentation and set all the parameters
+    seg.setOptimizeCoefficients (true);
+    seg.setModelType (pcl::SACMODEL_CYLINDER);
+    seg.setMethodType (pcl::SAC_RANSAC);
+    seg.setNormalDistanceWeight (BRANCHSEG_NORMDIST_WEIGHT);
+    seg.setMaxIterations (BRANCHSEG_MAXITT);
+    seg.setDistanceThreshold (BRANCHSEG_CYLDIST_THRESH);
+    seg.setRadiusLimits (BRANCHSEG_CYLRAD_MIN, BRANCHSEG_CYLRAD_MAX);
+    seg.setInputCloud (cloud);
+    seg.setInputNormals (cloud_normals);
+
+    // Obtain the cylinder inliers and coefficients
+    seg.segment (*inliers_branch, *coefficients_cylinder);
+
+    if (coefficients_cylinder->values[4] < 0) {
+        Eigen::Matrix3f R;
+        Eigen::Vector3f axis(coefficients_cylinder->values[3],
+                             coefficients_cylinder->values[4],
+                             coefficients_cylinder->values[5]);
+        R << -1, 0, 0,
+                0, -1, 0,
+                0, 0, -1;
+        axis = R*axis;
+        coefficients_cylinder->values[3] = axis(0);
+        coefficients_cylinder->values[4] = axis(1);
+        coefficients_cylinder->values[5] = axis(2);
+    }
+
+    // Extract cylinder inliers
+    extract.setInputCloud (cloud);
+    extract.setIndices (inliers_branch);
+    extract.setNegative (true);
+    extract.filter (*cloud_remainder);
+}
+
+/** PCL Frame Normal Estimation */
+void Norm_Est( pcl::PointCloud<PointT>::Ptr cloud, pcl::PointCloud<PointNT>::Ptr cloud_normals, float normKSearchRadius )
+{
+    pcl::NormalEstimation<PointT, PointNT> ne;
+    pcl::search::KdTree<PointT>::Ptr tree (new pcl::search::KdTree<PointT> ());
+
+    // Estimate point normals
+    ne.setSearchMethod (tree);
+    ne.setInputCloud (cloud);
+    ne.setRadiusSearch ( normKSearchRadius );
+    ne.compute (*cloud_normals);
+}
+
 void chatterCallback(sensor_msgs::PointCloud2ConstPtr msg)
 {
     //ROS_INFO("I heard: [%s]", msg->data.c_str());
@@ -90,6 +155,13 @@ int main(int argc, char **argv)
     pcl::PointCloud<PointT>::Ptr cloud_DownSampled (new pcl::PointCloud<PointT>);
     Eigen::Vector3f COM;
     pcl::PointCloud<PointT>::Ptr cloud_filtered (new pcl::PointCloud<PointT>);
+    pcl::ModelCoefficients::Ptr coefficients_cylinder_branch (new pcl::ModelCoefficients);
+    coefficients_cylinder_branch->values.resize (7);
+    pcl::PointCloud<PointNT>::Ptr branch_normals (new pcl::PointCloud<PointNT>);
+    pcl::PointCloud<PointT>::Ptr cloud_remainder (new pcl::PointCloud<PointT> ());
+
+
+
 
     boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer (new pcl::visualization::PCLVisualizer ("3D Viewer")); //vizualiser
     viewer->initCameraParameters( );
@@ -101,15 +173,25 @@ int main(int argc, char **argv)
     {
         cloud_DownSampled->clear();
         cloud_filtered->clear();
+        branch_normals->clear();
+        cloud_remainder->clear();
 
         DownSample( cloud, cloud_DownSampled );
         cloud_DownSampled->width = (int)cloud_DownSampled->points.size();
 
         Frame_Filter( cloud_DownSampled, cloud_filtered );
+        //Frame_Filter( cloud, cloud_filtered );
         cloud_filtered->width = (int)cloud_filtered->points.size();
+
+        Norm_Est( cloud_filtered, branch_normals, BRANCH_NORM_KSEARCH_RADIUS );
+        branch_normals->width = (int)branch_normals->points.size();
+
+        Branch_Seg( cloud_filtered, branch_normals,
+                    coefficients_cylinder_branch, cloud_remainder);
 
         viewer->removeAllShapes();
         viewer->updatePointCloud( cloud_filtered, "Filtered Cloud" );
+        viewer->addCylinder ( *coefficients_cylinder_branch, "sadfsaf" );
         viewer->spinOnce (100);
 
         cloud->clear();

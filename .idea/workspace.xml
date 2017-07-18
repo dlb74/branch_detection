@@ -66,8 +66,8 @@
       <file leaf-file-name="test_client.cpp" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/test_client.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="560">
-              <caret line="35" column="33" lean-forward="true" selection-start-line="35" selection-start-column="33" selection-end-line="35" selection-end-column="33" />
+            <state relative-caret-position="508">
+              <caret line="85" column="90" lean-forward="true" selection-start-line="85" selection-start-column="90" selection-end-line="85" selection-end-column="90" />
               <folding />
             </state>
           </provider>
@@ -135,8 +135,8 @@
     <sorting>DEFINITION_ORDER</sorting>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="1601" />
-    <option name="y" value="369" />
+    <option name="x" value="1889" />
+    <option name="y" value="162" />
     <option name="width" value="1534" />
     <option name="height" value="1522" />
   </component>
@@ -443,7 +443,7 @@
       <workItem from="1498698893642" duration="5477000" />
       <workItem from="1499046066899" duration="1574000" />
       <workItem from="1499053140794" duration="3237000" />
-      <workItem from="1499750174567" duration="16959000" />
+      <workItem from="1499750174567" duration="22117000" />
     </task>
     <task id="LOCAL-00001" summary="Added template methods and files for a ROS service. &#10;&#10;Tbis includes the srv directory, the main.cpp file where logic is handled for creating the service&#10;and the msg directory.&#10;&#10;It also includes the updated CMakLists.txt file and package.xml file which have been adjusted to support these changes accordingly">
       <created>1496023219209</created>
@@ -456,10 +456,10 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="31616000" />
+    <option name="totallyTimeSpent" value="36774000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="1601" y="369" width="1534" height="1522" extended-state="0" />
+    <frame x="1889" y="162" width="1534" height="1522" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2643603" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -619,8 +619,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/test_client.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="560">
-          <caret line="35" column="33" lean-forward="true" selection-start-line="35" selection-start-column="33" selection-end-line="35" selection-end-column="33" />
+        <state relative-caret-position="508">
+          <caret line="85" column="90" lean-forward="true" selection-start-line="85" selection-start-column="90" selection-end-line="85" selection-end-column="90" />
           <folding />
         </state>
       </provider>
