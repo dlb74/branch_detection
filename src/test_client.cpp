@@ -12,6 +12,7 @@
 #include <pcl/point_types.h>
 #include <pcl/common/common_headers.h>
 #include <pcl/visualization/pcl_visualizer.h>
+#include <pcl/filters/passthrough.h>
 
 #include <pcl/features/moment_of_inertia_estimation.h>
 #include <pcl/filters/statistical_outlier_removal.h>
@@ -118,6 +119,17 @@ void Branch_Seg( pcl::PointCloud<PointT>::Ptr cloud,
     extract.filter (*cloud_remainder);
 }
 
+void Filter_Far_Points(pcl::PointCloud<PointT>::Ptr cloud,
+                       pcl::PointCloud<PointT>::Ptr cloud_filtered ) {
+    pcl::PassThrough<pcl::PointXYZ> pass;
+    pass.setInputCloud (cloud);
+    pass.setFilterFieldName ("z");
+    pass.setFilterLimits (0.0, 1.0);
+    //pass.setFilterLimitsNegative (true);
+    pass.filter (*cloud_filtered);
+
+}
+
 /** PCL Frame Normal Estimation */
 void Norm_Est( pcl::PointCloud<PointT>::Ptr cloud, pcl::PointCloud<PointNT>::Ptr cloud_normals, float normKSearchRadius )
 {
@@ -161,8 +173,6 @@ int main(int argc, char **argv)
     pcl::PointCloud<PointT>::Ptr cloud_remainder (new pcl::PointCloud<PointT> ());
 
 
-
-
     boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer (new pcl::visualization::PCLVisualizer ("3D Viewer")); //vizualiser
     viewer->initCameraParameters( );
     viewer->setShowFPS( false );
@@ -179,7 +189,7 @@ int main(int argc, char **argv)
         DownSample( cloud, cloud_DownSampled );
         cloud_DownSampled->width = (int)cloud_DownSampled->points.size();
 
-        Frame_Filter( cloud_DownSampled, cloud_filtered );
+        Filter_Far_Points( cloud_DownSampled, cloud_filtered );
         //Frame_Filter( cloud, cloud_filtered );
         cloud_filtered->width = (int)cloud_filtered->points.size();
 
