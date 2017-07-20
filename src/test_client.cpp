@@ -34,7 +34,7 @@
 #include <ctime>
 #include <math.h>
 
-#define DWNSMPL_SQRLEAF_SIZE 0.04
+#define DWNSMPL_SQRLEAF_SIZE 0.02
 
 #define KMEANFILTER_RANGE 10
 #define KMEANFILTER_THRESH_STDVMUL 0.8
@@ -186,17 +186,18 @@ int main(int argc, char **argv)
         branch_normals->clear();
         cloud_remainder->clear();
 
-        DownSample( cloud, cloud_DownSampled );
-        cloud_DownSampled->width = (int)cloud_DownSampled->points.size();
 
-        Filter_Far_Points( cloud_DownSampled, cloud_filtered );
-        //Frame_Filter( cloud, cloud_filtered );
+        Filter_Far_Points( cloud, cloud_filtered );
         cloud_filtered->width = (int)cloud_filtered->points.size();
 
-        Norm_Est( cloud_filtered, branch_normals, BRANCH_NORM_KSEARCH_RADIUS );
+
+        DownSample( cloud_filtered, cloud_DownSampled );
+        cloud_DownSampled->width = (int)cloud_DownSampled->points.size();
+
+        Norm_Est( cloud_DownSampled, branch_normals, BRANCH_NORM_KSEARCH_RADIUS );
         branch_normals->width = (int)branch_normals->points.size();
 
-        Branch_Seg( cloud_filtered, branch_normals,
+        Branch_Seg( cloud_DownSampled, branch_normals,
                     coefficients_cylinder_branch, cloud_remainder);
 
         viewer->removeAllShapes();

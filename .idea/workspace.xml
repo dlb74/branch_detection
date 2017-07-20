@@ -10,6 +10,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="82d6da95-764a-48d4-b678-d7efd08d8f73" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/test_client.cpp" afterPath="$PROJECT_DIR$/src/test_client.cpp" />
     </list>
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
@@ -66,8 +67,8 @@
       <file leaf-file-name="test_client.cpp" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/test_client.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="396">
-              <caret line="191" column="25" lean-forward="false" selection-start-line="191" selection-start-column="25" selection-end-line="191" selection-end-column="25" />
+            <state relative-caret-position="-132">
+              <caret line="57" column="1" lean-forward="true" selection-start-line="57" selection-start-column="1" selection-end-line="57" selection-end-column="1" />
               <folding />
             </state>
           </provider>
@@ -443,7 +444,7 @@
       <workItem from="1498698893642" duration="5477000" />
       <workItem from="1499046066899" duration="1574000" />
       <workItem from="1499053140794" duration="3237000" />
-      <workItem from="1499750174567" duration="24075000" />
+      <workItem from="1499750174567" duration="28171000" />
     </task>
     <task id="LOCAL-00001" summary="Added template methods and files for a ROS service. &#10;&#10;Tbis includes the srv directory, the main.cpp file where logic is handled for creating the service&#10;and the msg directory.&#10;&#10;It also includes the updated CMakLists.txt file and package.xml file which have been adjusted to support these changes accordingly">
       <created>1496023219209</created>
@@ -456,7 +457,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="38732000" />
+    <option name="totallyTimeSpent" value="42828000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1889" y="162" width="1534" height="1522" extended-state="0" />
@@ -619,8 +620,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/test_client.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="396">
-          <caret line="191" column="25" lean-forward="false" selection-start-line="191" selection-start-column="25" selection-end-line="191" selection-end-column="25" />
+        <state relative-caret-position="-132">
+          <caret line="57" column="1" lean-forward="true" selection-start-line="57" selection-start-column="1" selection-end-line="57" selection-end-column="1" />
           <folding />
         </state>
       </provider>
