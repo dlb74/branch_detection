@@ -39,7 +39,7 @@
 #define KMEANFILTER_RANGE 10
 #define KMEANFILTER_THRESH_STDVMUL 0.8
 
-#define BRANCH_NORM_KSEARCH_RADIUS 0.01
+#define BRANCH_NORM_KSEARCH_RADIUS 0.5
 #define BRANCHSEG_NORMDIST_WEIGHT 0.05
 #define BRANCHSEG_MAXITT 1000
 #define BRANCHSEG_CYLDIST_THRESH 0.01
@@ -75,6 +75,7 @@ void Frame_Filter( pcl::PointCloud<PointT>::Ptr cloud,
     sor.filter (*cloud_filtered);
 }
 
+/**
 int Trunk_Seg( pcl::PointCloud<PointT>::Ptr cloud,
                pcl::PointCloud<PointNT>::Ptr cloud_normals,
                pcl::ModelCoefficients::Ptr coefficients_cylinder,
@@ -171,7 +172,7 @@ int Trunk_Seg( pcl::PointCloud<PointT>::Ptr cloud,
     extract.setIndices (trunk_inliers);
     extract.setNegative (true);
     extract.filter (*cloud_remainder);
-}
+}*/
 
 
 void Branch_Seg( pcl::PointCloud<PointT>::Ptr cloud,
@@ -279,6 +280,12 @@ int main(int argc, char **argv)
     viewer->setBackgroundColor (0, 0, 0);
     viewer->addPointCloud<PointT> (cloud, "Filtered Cloud");
 
+    boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer2 (new pcl::visualization::PCLVisualizer ("3D Viewer")); //vizualiser
+    viewer2->initCameraParameters( );
+    viewer2->setShowFPS( false );
+    viewer2->setBackgroundColor (0, 0, 0);
+    viewer2->addPointCloud<PointT> (cloud, "Filtered Cloud");
+
     while (!viewer->wasStopped ())
     {
         cloud_thresholded->clear();
@@ -304,9 +311,14 @@ int main(int argc, char **argv)
                     coefficients_cylinder_branch, cloud_remainder);
 
         viewer->removeAllShapes();
-        viewer->updatePointCloud( cloud_filtered, "Filtered Cloud" );
+        viewer->updatePointCloud( cloud_remainder, "Filtered Cloud" );
         viewer->addCylinder ( *coefficients_cylinder_branch, "sadfsaf" );
         viewer->spinOnce (100);
+
+        viewer2->removeAllShapes();
+        viewer2->updatePointCloud( cloud_filtered, "Filtered Cloud" );
+        //viewer->addCylinder ( *coefficients_cylinder_branch, "sadfsaf" );
+        viewer2->spinOnce (100);
 
         cloud->clear();
 

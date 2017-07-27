@@ -66,8 +66,8 @@
       <file leaf-file-name="test_client.cpp" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/test_client.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="220">
-              <caret line="182" column="4" lean-forward="false" selection-start-line="182" selection-start-column="4" selection-end-line="182" selection-end-column="35" />
+            <state relative-caret-position="512">
+              <caret line="314" column="8" lean-forward="true" selection-start-line="314" selection-start-column="8" selection-end-line="314" selection-end-column="8" />
               <folding />
             </state>
           </provider>
@@ -107,6 +107,7 @@
       <find>hg</find>
       <find>h</find>
       <find>y</find>
+      <find>KMEANFILTER_THRESH_STDVMUL</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -443,7 +444,7 @@
       <workItem from="1498698893642" duration="5477000" />
       <workItem from="1499046066899" duration="1574000" />
       <workItem from="1499053140794" duration="3237000" />
-      <workItem from="1499750174567" duration="33849000" />
+      <workItem from="1499750174567" duration="36396000" />
     </task>
     <task id="LOCAL-00001" summary="Added template methods and files for a ROS service. &#10;&#10;Tbis includes the srv directory, the main.cpp file where logic is handled for creating the service&#10;and the msg directory.&#10;&#10;It also includes the updated CMakLists.txt file and package.xml file which have been adjusted to support these changes accordingly">
       <created>1496023219209</created>
@@ -456,7 +457,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="48506000" />
+    <option name="totallyTimeSpent" value="51053000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="2011" y="409" width="1534" height="1601" extended-state="0" />
@@ -619,8 +620,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/test_client.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="220">
-          <caret line="182" column="4" lean-forward="false" selection-start-line="182" selection-start-column="4" selection-end-line="182" selection-end-column="35" />
+        <state relative-caret-position="512">
+          <caret line="314" column="8" lean-forward="true" selection-start-line="314" selection-start-column="8" selection-end-line="314" selection-end-column="8" />
           <folding />
         </state>
       </provider>
