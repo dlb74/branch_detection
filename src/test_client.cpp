@@ -39,7 +39,7 @@
 #define KMEANFILTER_RANGE 10
 #define KMEANFILTER_THRESH_STDVMUL 0.8
 
-#define BRANCH_NORM_KSEARCH_RADIUS 0.5
+#define BRANCH_NORM_KSEARCH_RADIUS 0.05
 #define BRANCHSEG_NORMDIST_WEIGHT 0.05
 #define BRANCHSEG_MAXITT 1000
 #define BRANCHSEG_CYLDIST_THRESH 0.01
@@ -172,8 +172,8 @@ int Trunk_Seg( pcl::PointCloud<PointT>::Ptr cloud,
     extract.setIndices (trunk_inliers);
     extract.setNegative (true);
     extract.filter (*cloud_remainder);
-}*/
-
+}
+*/
 
 void Branch_Seg( pcl::PointCloud<PointT>::Ptr cloud,
                  pcl::PointCloud<PointNT>::Ptr cloud_normals,
@@ -286,6 +286,7 @@ int main(int argc, char **argv)
     viewer2->setBackgroundColor (0, 0, 0);
     viewer2->addPointCloud<PointT> (cloud, "Filtered Cloud");
 
+    int stopper = 0;
     while (!viewer->wasStopped ())
     {
         cloud_thresholded->clear();
@@ -293,7 +294,6 @@ int main(int argc, char **argv)
         cloud_filtered->clear();
         branch_normals->clear();
         cloud_remainder->clear();
-
 
         Filter_Far_Points( cloud, cloud_thresholded );
         cloud_thresholded->width = (int)cloud_thresholded->points.size();
@@ -310,15 +310,20 @@ int main(int argc, char **argv)
         Branch_Seg( cloud_filtered, branch_normals,
                     coefficients_cylinder_branch, cloud_remainder);
 
-        viewer->removeAllShapes();
-        viewer->updatePointCloud( cloud_remainder, "Filtered Cloud" );
-        viewer->addCylinder ( *coefficients_cylinder_branch, "sadfsaf" );
-        viewer->spinOnce (100);
+        //if (coefficients_cylinder_branch->values[0] != 0) {stopper = 1;}
 
-        viewer2->removeAllShapes();
-        viewer2->updatePointCloud( cloud_filtered, "Filtered Cloud" );
-        //viewer->addCylinder ( *coefficients_cylinder_branch, "sadfsaf" );
-        viewer2->spinOnce (100);
+        //if (stopper == 1) {
+
+
+            viewer->removeAllShapes();
+            viewer->updatePointCloud(cloud_filtered, "Filtered Cloud");
+            viewer->addCylinder(*coefficients_cylinder_branch, "sadfsaf");
+            viewer->spinOnce(100);
+
+            viewer2->removeAllShapes();
+            viewer2->updatePointCloud(cloud_remainder, "Filtered Cloud");
+            viewer2->spinOnce(100);
+        //}
 
         cloud->clear();
 
