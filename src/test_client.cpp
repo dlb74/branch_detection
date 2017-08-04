@@ -42,8 +42,8 @@
 #define TRUNK_NORM_KSEARCH_RADIUS 0.05
 #define TRUNKSEG_NORMDIST_WEIGHT 0.05
 #define TRUNKSEG_CYLDIST_THRESH 0.01
-#define TRUNKSEG_CYLRAD_MIN 0.07
-#define TRUNKSEG_CYLRAD_MAX 0.10
+#define TRUNKSEG_CYLRAD_MIN 0.09
+#define TRUNKSEG_CYLRAD_MAX 0.15
 
 #define BRANCH_NORM_KSEARCH_RADIUS 0.01
 #define BRANCHSEG_NORMDIST_WEIGHT 0.05
@@ -85,7 +85,8 @@ void Cylinder_Seg( pcl::PointCloud<PointT>::Ptr cloud,
                  pcl::PointCloud<PointNT>::Ptr cloud_normals,
                  pcl::ModelCoefficients::Ptr coefficients_cylinder,
                  pcl::PointCloud<PointT>::Ptr cloud_remainder,
-                 double normalWeight, double distanceThreshold, double radiusMinimum, double radiusMaximum)
+                 double normalWeight, double distanceThreshold, double radiusMinimum, double radiusMaximum,
+                 int modelType)
 {
     pcl::PointIndices::Ptr inliers_trunk (new pcl::PointIndices);
     pcl::SACSegmentationFromNormals<PointT, PointNT> seg;
@@ -93,7 +94,7 @@ void Cylinder_Seg( pcl::PointCloud<PointT>::Ptr cloud,
 
     // Create the segmentation object for cylinder segmentation and set all the parameters
     seg.setOptimizeCoefficients (true);
-    seg.setModelType (pcl::SACMODEL_CYLINDER);
+    seg.setModelType (modelType);
     seg.setMethodType (pcl::SAC_RANSAC);
     seg.setNormalDistanceWeight (normalWeight);
     seg.setMaxIterations (1000);
@@ -223,14 +224,14 @@ int main(int argc, char **argv)
 
         Cylinder_Seg( cloud_filtered, trunk_normals,
                    coefficients_cylinder_trunk, cloud_after_trunk_seg, TRUNKSEG_NORMDIST_WEIGHT,
-                   TRUNKSEG_CYLDIST_THRESH, TRUNKSEG_CYLRAD_MIN, TRUNKSEG_CYLRAD_MAX);
+                   TRUNKSEG_CYLDIST_THRESH, TRUNKSEG_CYLRAD_MIN, TRUNKSEG_CYLRAD_MAX, pcl::SACMODEL_CYLINDER);
 
         Norm_Est( cloud_after_trunk_seg, branch_normals, BRANCH_NORM_KSEARCH_RADIUS );
         branch_normals->width = (int)branch_normals->points.size();
 
         Cylinder_Seg( cloud_after_trunk_seg, branch_normals,
                       coefficients_cylinder_branch, cloud_after_branch_seg, BRANCHSEG_NORMDIST_WEIGHT,
-                      BRANCHSEG_CYLDIST_THRESH, BRANCHSEG_CYLRAD_MIN, BRANCHSEG_CYLRAD_MAX);
+                      BRANCHSEG_CYLDIST_THRESH, BRANCHSEG_CYLRAD_MIN, BRANCHSEG_CYLRAD_MAX, pcl::SACMODEL_LINE);
 
 
         //if (coefficients_cylinder_trunk->values[0] != 0) {stopper = 1;}
