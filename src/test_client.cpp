@@ -41,10 +41,15 @@
 
 #define TRUNK_NORM_KSEARCH_RADIUS 0.05
 #define TRUNKSEG_NORMDIST_WEIGHT 0.05
-#define TRUNKSEG_MAXITT 1000
 #define TRUNKSEG_CYLDIST_THRESH 0.01
 #define TRUNKSEG_CYLRAD_MIN 0.07
 #define TRUNKSEG_CYLRAD_MAX 0.10
+
+#define BRANCH_NORM_KSEARCH_RADIUS 0.01
+#define BRANCHSEG_NORMDIST_WEIGHT 0.05
+#define BRANCHSEG_CYLDIST_THRESH 0.01
+#define BRANCHSEG_CYLRAD_MIN 0.002
+#define BRANCHSEG_CYLRAD_MAX 0.025
 
 typedef pcl::PointXYZ PointT;
 typedef pcl::Normal PointNT;
@@ -76,10 +81,11 @@ void Frame_Filter( pcl::PointCloud<PointT>::Ptr cloud,
 }
 
 
-void Trunk_Seg( pcl::PointCloud<PointT>::Ptr cloud,
+void Cylinder_Seg( pcl::PointCloud<PointT>::Ptr cloud,
                  pcl::PointCloud<PointNT>::Ptr cloud_normals,
                  pcl::ModelCoefficients::Ptr coefficients_cylinder,
-                 pcl::PointCloud<PointT>::Ptr cloud_remainder)
+                 pcl::PointCloud<PointT>::Ptr cloud_remainder,
+                 double normalWeight, double distanceThreshold, double radiusMinimum, double radiusMaximum)
 {
     pcl::PointIndices::Ptr inliers_trunk (new pcl::PointIndices);
     pcl::SACSegmentationFromNormals<PointT, PointNT> seg;
@@ -89,10 +95,10 @@ void Trunk_Seg( pcl::PointCloud<PointT>::Ptr cloud,
     seg.setOptimizeCoefficients (true);
     seg.setModelType (pcl::SACMODEL_CYLINDER);
     seg.setMethodType (pcl::SAC_RANSAC);
-    seg.setNormalDistanceWeight (TRUNKSEG_NORMDIST_WEIGHT);
-    seg.setMaxIterations (TRUNKSEG_MAXITT);
-    seg.setDistanceThreshold (TRUNKSEG_CYLDIST_THRESH);
-    seg.setRadiusLimits (TRUNKSEG_CYLRAD_MIN, TRUNKSEG_CYLRAD_MAX);
+    seg.setNormalDistanceWeight (normalWeight);
+    seg.setMaxIterations (1000);
+    seg.setDistanceThreshold (distanceThreshold);
+    seg.setRadiusLimits (radiusMinimum, radiusMaximum);
     seg.setInputCloud (cloud);
     seg.setInputNormals (cloud_normals);
 
@@ -169,11 +175,16 @@ int main(int argc, char **argv)
     Eigen::Vector3f COM;
     pcl::PointCloud<PointT>::Ptr cloud_thresholded (new pcl::PointCloud<PointT>);
     pcl::PointCloud<PointT>::Ptr cloud_filtered (new pcl::PointCloud<PointT>);
+
     pcl::ModelCoefficients::Ptr coefficients_cylinder_trunk (new pcl::ModelCoefficients);
     coefficients_cylinder_trunk->values.resize (7);
     pcl::PointCloud<PointNT>::Ptr trunk_normals (new pcl::PointCloud<PointNT>);
-    pcl::PointCloud<PointT>::Ptr cloud_remainder (new pcl::PointCloud<PointT> ());
+    pcl::PointCloud<PointT>::Ptr cloud_after_trunk_seg (new pcl::PointCloud<PointT> ());
 
+    pcl::ModelCoefficients::Ptr coefficients_cylinder_branch (new pcl::ModelCoefficients);
+    coefficients_cylinder_branch->values.resize (7);
+    pcl::PointCloud<PointNT>::Ptr branch_normals (new pcl::PointCloud<PointNT>);
+    pcl::PointCloud<PointT>::Ptr cloud_after_branch_seg (new pcl::PointCloud<PointT> ());
 
     boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer (new pcl::visualization::PCLVisualizer ("3D Viewer")); //vizualiser
     viewer->initCameraParameters( );
@@ -194,7 +205,9 @@ int main(int argc, char **argv)
         cloud_DownSampled->clear();
         cloud_filtered->clear();
         trunk_normals->clear();
-        cloud_remainder->clear();
+        cloud_after_trunk_seg->clear();
+        branch_normals->clear();
+        cloud_after_branch_seg->clear();
 
         Filter_Far_Points( cloud, cloud_thresholded );
         cloud_thresholded->width = (int)cloud_thresholded->points.size();
@@ -208,8 +221,17 @@ int main(int argc, char **argv)
         Norm_Est( cloud_filtered, trunk_normals, TRUNK_NORM_KSEARCH_RADIUS );
         trunk_normals->width = (int)trunk_normals->points.size();
 
-        Trunk_Seg( cloud_filtered, trunk_normals,
-                   coefficients_cylinder_trunk, cloud_remainder);
+        Cylinder_Seg( cloud_filtered, trunk_normals,
+                   coefficients_cylinder_trunk, cloud_after_trunk_seg, TRUNKSEG_NORMDIST_WEIGHT,
+                   TRUNKSEG_CYLDIST_THRESH, TRUNKSEG_CYLRAD_MIN, TRUNKSEG_CYLRAD_MAX);
+
+        Norm_Est( cloud_after_trunk_seg, branch_normals, BRANCH_NORM_KSEARCH_RADIUS );
+        branch_normals->width = (int)branch_normals->points.size();
+
+        Cylinder_Seg( cloud_after_trunk_seg, branch_normals,
+                      coefficients_cylinder_branch, cloud_after_branch_seg, BRANCHSEG_NORMDIST_WEIGHT,
+                      BRANCHSEG_CYLDIST_THRESH, BRANCHSEG_CYLRAD_MIN, BRANCHSEG_CYLRAD_MAX);
+
 
         //if (coefficients_cylinder_trunk->values[0] != 0) {stopper = 1;}
 
@@ -222,12 +244,12 @@ int main(int argc, char **argv)
             viewer->spinOnce(100);
 
             viewer2->removeAllShapes();
-            viewer2->updatePointCloud(cloud_remainder, "Filtered Cloud");
+            viewer2->updatePointCloud(cloud_after_branch_seg, "Filtered Cloud");
+            viewer2->addCylinder(*coefficients_cylinder_branch, "sadfffffsaf");
             viewer2->spinOnce(100);
         //}
 
         cloud->clear();
-
 
         ros::spinOnce();
 
