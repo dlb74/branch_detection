@@ -34,7 +34,7 @@
 #include <ctime>
 #include <math.h>
 
-#define DWNSMPL_SQRLEAF_SIZE 0.02
+#define DWNSMPL_SQRLEAF_SIZE 0.01
 
 #define KMEANFILTER_RANGE 10
 #define KMEANFILTER_THRESH_STDVMUL 0.8
@@ -231,7 +231,7 @@ int main(int argc, char **argv)
 
         Cylinder_Seg( cloud_after_trunk_seg, branch_normals,
                       coefficients_cylinder_branch, cloud_after_branch_seg, BRANCHSEG_NORMDIST_WEIGHT,
-                      BRANCHSEG_CYLDIST_THRESH, BRANCHSEG_CYLRAD_MIN, BRANCHSEG_CYLRAD_MAX, pcl::SACMODEL_LINE);
+                      BRANCHSEG_CYLDIST_THRESH, BRANCHSEG_CYLRAD_MIN, BRANCHSEG_CYLRAD_MAX, pcl::SACMODEL_CYLINDER);
 
 
         //if (coefficients_cylinder_trunk->values[0] != 0) {stopper = 1;}
