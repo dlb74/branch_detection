@@ -66,8 +66,8 @@
       <file leaf-file-name="test_client.cpp" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/test_client.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="704">
-              <caret line="243" column="12" lean-forward="false" selection-start-line="243" selection-start-column="12" selection-end-line="243" selection-end-column="12" />
+            <state relative-caret-position="688">
+              <caret line="205" column="35" lean-forward="true" selection-start-line="205" selection-start-column="35" selection-end-line="205" selection-end-column="35" />
               <folding />
             </state>
           </provider>
@@ -435,6 +435,7 @@
       <workItem from="1502334558020" duration="2328000" />
       <workItem from="1503441791160" duration="764000" />
       <workItem from="1503442622386" duration="10106000" />
+      <workItem from="1506040775911" duration="1310000" />
     </task>
     <task id="LOCAL-00001" summary="Added template methods and files for a ROS service. &#10;&#10;Tbis includes the srv directory, the main.cpp file where logic is handled for creating the service&#10;and the msg directory.&#10;&#10;It also includes the updated CMakLists.txt file and package.xml file which have been adjusted to support these changes accordingly">
       <created>1496023219209</created>
@@ -447,7 +448,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="82696000" />
+    <option name="totallyTimeSpent" value="84006000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1881" y="424" width="1534" height="1601" extended-state="0" />
@@ -794,8 +795,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/test_client.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="704">
-          <caret line="243" column="12" lean-forward="false" selection-start-line="243" selection-start-column="12" selection-end-line="243" selection-end-column="12" />
+        <state relative-caret-position="688">
+          <caret line="205" column="35" lean-forward="true" selection-start-line="205" selection-start-column="35" selection-end-line="205" selection-end-column="35" />
           <folding />
         </state>
       </provider>
